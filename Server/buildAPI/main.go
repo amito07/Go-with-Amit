@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -35,7 +36,25 @@ func (c *Course) isEmpty() bool{
 }
 
 func main() {
-	fmt.Println("Hello, World!")
+	fmt.Println("Welcome to API Server")
+
+	//seedings 
+
+	Courses = append(Courses, Course{CourseId: "1", CourseName: "Course 1", Price: 100.00, Author: &Author{FullName: "Author 1", Website: "www.author1.com"}})
+	Courses = append(Courses, Course{CourseId: "2", CourseName: "Course 2", Price: 200.00, Author: &Author{FullName: "Author 2", Website: "www.author2.com"}})
+
+
+	r := mux.NewRouter()
+
+	//routes 
+	r.HandleFunc("/", serverHome).Methods("GET")
+	r.HandleFunc("/getcourses", getAllCourses).Methods("GET")
+	r.HandleFunc("/getcourse/{id}", getOneCourses).Methods("GET")
+	r.HandleFunc("/createcourse", createCourse).Methods("POST")
+	r.HandleFunc("/updatecourse/{id}", updateCourse).Methods("PUT")
+	r.HandleFunc("/deletecourse/{id}", deleteCourse).Methods("DELETE")
+
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
 
 // Controllers --file
